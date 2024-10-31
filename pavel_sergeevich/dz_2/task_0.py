@@ -18,12 +18,7 @@ def fuel_consumption(length: float, consumption: float) -> float:
     :return: расход топлива маршрута, л
     """
 
-    try:
-        if length <= 0 or consumption <= 0:
-            raise ValueError
-    except ValueError:
-        print("Error: Invalid arguments")
-        return 0
+    assert length > 0 and consumption > 0, "Error: Invalid input arguments"
 
     return length * consumption / 100
 
