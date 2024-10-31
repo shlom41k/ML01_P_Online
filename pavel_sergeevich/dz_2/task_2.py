@@ -80,4 +80,5 @@ if __name__ == "__main__":
     print("Min value: " + str(min(y_list)))
     print("Max value: " + str(max(y_list)))
 
-    show_equation("Graph of equation", x_list, y_list, [[critical_point_val, equation(cf_example, critical_point_val)]])
+    critical_point_xy = [[critical_point_val, equation(cf_example, critical_point_val)]]
+    show_equation("Graph of equation", x_list, y_list, critical_point_xy)
