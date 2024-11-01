@@ -90,14 +90,14 @@ Automatic merge failed; fix conflicts and then commit the result.
 ### 3. Разрешение конфликта
 - При помощи программы [Meld](https://meldmerge.org/) открываем 'проблемный' файл:
 <p align="center">
-![#](Sergey_Leonidovich/DZ_02/git/img/meld_1.PNG)
+![#](https://github.com/shlom41k/ML01_P_Online/blob/main/Sergey_Leonidovich/DZ_02/git/img/meld_1.PNG)
 </p>
 
 - Формируем итоговое содержание файла `git_example.txt`. 
 В данном случае мы хотим, чтобы присутствовали данные из обеих веток (`pupa` и `lupa`).
 Сохраняем полученный результат.
 <p align="center">
-![#](Sergey_Leonidovich/DZ_02/git/img/meld_1.PNG)
+![#](https://github.com/shlom41k/ML01_P_Online/blob/main/Sergey_Leonidovich/DZ_02/git/img/meld_2.PNG)
 </p>
 
 - Добавляем изменения и делаем коммит:
