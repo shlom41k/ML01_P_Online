@@ -27,7 +27,9 @@ $ git commit -am "Update data"
 ```
 
 - Возвращаемся в ветку `main`. Файл `git_example.txt` в ней по-прежнему выглядит так: 
-```String from "main" branch```
+```
+String from "main" branch
+```
 
 - Создаем ветку `lupa`:
 ```
@@ -47,7 +49,9 @@ $ git commit -am "Update data from LUPA"
 ```
 
 - Возвращаемся в ветку `main`. Файл `git_example.txt` в ней по-прежнему выглядит так: 
-```String from "main" branch```
+```
+String from "main" branch
+```
 <hr>
 
 ### 2. Слияние веток
@@ -84,7 +88,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 ```
 
 ### 3. Разрешение конфликта
-- При помощи программы `[Meld](https://meldmerge.org/)` открываем 'проблемный' файл:
+- При помощи программы [Meld](https://meldmerge.org/) открываем 'проблемный' файл:
 <p align="center">
 ![#](git/img/meld_1.PNG)
 </p>
@@ -105,4 +109,4 @@ $ git commit -am "Merge PUPA & LUPA branches"
 
 Конфликт разрешен.
 
-В папке `[img](git/img)` находятся изображения командной строки `git bash`, где выполнялся данный пример.
+В папке [img](git/img) находятся изображения командной строки `git bash`, где выполнялся данный пример.
