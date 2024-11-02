@@ -1,1 +1,1 @@
-Some content to conflict with
+File to merge with different content
