@@ -91,7 +91,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 - [x] При помощи программы [Meld](https://meldmerge.org/) открываем 'проблемный' файл:
 
 <p align="center">
-  <img src="https://github.com/shlom41k/ML01_P_Online/blob/main/Sergey_Leonidovich/DZ_02/git/img/meld_1.PNG">
+  <img src="img/meld_1.PNG">
 </p>
 
 - [x] Формируем итоговое содержание файла `git_example.txt`. 
@@ -99,7 +99,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 Сохраняем полученный результат:
 
 <p align="center">
-  <img src="https://github.com/shlom41k/ML01_P_Online/blob/main/Sergey_Leonidovich/DZ_02/git/img/meld_2.PNG">
+  <img src="img/meld_2.PNG">
 </p>
 
 - [x] Добавляем изменения и делаем коммит:
@@ -110,8 +110,8 @@ $ git commit -am "Merge PUPA & LUPA branches"
 
 - [x] Конфликт разрешен. Обе ветки (`pupa` и `lupa`) 'слиты' в ветку `main`:
 <p align="center">
-  <img src="git/img/gitkraken.PNG">
+  <img src="img/gitkraken.PNG">
 </p>
 <hr>
 
-В папке [img](git/img) находятся изображения командной строки `git bash`, где выполнялся данный пример.
+В папке [img](img) находятся изображения командной строки `git bash`, где выполнялся данный пример.
