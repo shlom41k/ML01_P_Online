@@ -10,37 +10,75 @@
     y = a*x**2+b*x-c
 """
 
-import numpy as np
+import matplotlib.pyplot as plt
 
 
-def equation(a: float, b: float, c: float, x: float):
-    return a * (x ** 2) + b * x + c
+def equation(cf: list, x: float):
+    return cf[0] * (x ** 2) + cf[1] * x + cf[2]
 
 
-def special_point(a: float, b: float):
-    # get derivative and calculate special point
+def equation_print(cf: list):
+    # this function forming txt equation for printing
 
-    return a * 2 / b
+    txt = str(cf[0]) + "x^2"
+
+    if cf[1] > 0:
+        txt += "-" + str(abs(cf[1])) + "x"
+    else:
+        txt += "+" + str(abs(cf[1])) + "x"
+
+    if cf[2] > 0:
+        txt += "-" + str(abs(cf[1]))
+    else:
+        txt += "+" + str(abs(cf[1]))
+
+    return txt
+
+
+def critical_point(cf: list):
+    # get derivative and calculate critical point for quadratic equation
+
+    return -cf[1] / (2 * cf[0])
+
+
+def show_equation(name: str, x: list, y: list, critical_p: list):
+    fig, ax = plt.subplots(num=name)
+    ax.plot(x, y, linewidth=2.0)
+
+    if critical_p:
+        for critical_p in critical_p:
+            # print(critical_p)
+            ax.plot(critical_p[0], critical_p[1], 'ro', label='critical_p')
+
+    plt.grid()
+    plt.show()
 
 
 if __name__ == "__main__":
-    # можно построить графики онлайн: https://www.desmos.com/calculator/g6ikxtneep?lang=ru
-
-    a = -26
-    b = 25
-    c = -9
-
-    x_left = -5
-    x_right = 5
+    cf_example = [-26, 25, -9]
+    segment = [-5, 5]
+    step = 0.1
 
     # получаем особую точку
-    print("Special point (x): " + str(special_point(a, b)))
+    critical_point_val = critical_point(cf_example)
+    print("Critical point for equation " + equation_print(cf_example) + " equals: " + str(critical_point_val))
 
-    step = 0.1
-    x_points = np.linspace(x_left, x_right, int((abs(x_left) + abs(x_right))/step))
-    y_points = np.array([equation(a, b, c, x) for x in x_points])
+    x_list = []
+    y_list = []
 
-    print("Total points:", len(x_points))
+    x_way = segment[0]
+    while x_way < segment[1]:
+        y_way = equation(cf_example, x_way)
 
-    print("Min value: " + str(y_points.min()))
-    print("Max value: " + str(y_points.max()))
+        x_list.append(x_way)
+        y_list.append(y_way)
+
+        x_way += step
+
+    print("Total points:", len(x_list))
+
+    print("Min value: " + str(min(y_list)))
+    print("Max value: " + str(max(y_list)))
+
+    critical_point_xy = [[critical_point_val, equation(cf_example, critical_point_val)]]
+    show_equation("Graph of equation", x_list, y_list, critical_point_xy)
