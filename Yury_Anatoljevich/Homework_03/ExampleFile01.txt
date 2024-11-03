@@ -1,3 +1,9 @@
 String 1: AAA
+<<<<<<< HEAD
 String 2: YYY
 String 3: CCC
+=======
+String 2: XXX
+String 3: CCC
+String 4: DDD
+>>>>>>> branch_temp
