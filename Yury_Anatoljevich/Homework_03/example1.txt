@@ -1,3 +1,3 @@
 String 1: AAA
-String 2: XXX
+String 2: XXX XXX
 String 3: CCC
