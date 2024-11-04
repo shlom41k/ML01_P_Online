@@ -1,0 +1,24 @@
+0. Прописываем приложение Meld как инструмент слияния веток для Git:
+git config --global merge.tool meld
+git config --global diff.tool meld
+git config --global mergetool.meld.path "C:/Program Files/Meld/Meld.exe"
+git config --global mergetool.meld.path 'c/Program Files/Meld/Meld.exe'
+
+1. В основной ветке проекта создаем файл ExampleFile01.txt с несколькими строками текста.
+Выводим git status, видим, что файл пока не добавлен
+Добавляем его в промежуточную зону Git:
+git add .
+Делаем первый коммит (то есть добавляем этой файл в локальный репозиторий):
+git commit -m "Adding first test file"
+
+2. Создаем новую ветку проекта branch_temp
+$ git checkout -b branch_temp
+Сохраняем там файл Example1.txt с отличающейся строкой текста.
+Переходим в основную ветку main
+Меняем там ту же самую строку текста.
+Добавляем в гит и делаем коммит.
+
+3. Пробуем слить ветку branch_temp с веткой main
+$ git merge branch_temp
+Получаем сообщение об ошибке. 
+С помощью Merge разрешаем конфликт. 
