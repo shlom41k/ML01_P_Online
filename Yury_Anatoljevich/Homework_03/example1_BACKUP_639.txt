@@ -1,0 +1,7 @@
+String 1: AAA
+<<<<<<< HEAD
+String 2: XXX
+=======
+String 2: YYY
+>>>>>>> branch_temp
+String 3: CCC
