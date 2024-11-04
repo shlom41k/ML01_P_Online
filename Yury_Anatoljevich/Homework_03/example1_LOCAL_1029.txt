@@ -1,3 +1,0 @@
-String 1: AAA
-String 2: BBB
-String 3: CCC
