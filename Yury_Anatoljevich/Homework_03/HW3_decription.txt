@@ -2,7 +2,7 @@
 git config --global merge.tool meld
 git config --global diff.tool meld
 git config --global mergetool.meld.path "C:/Program Files/Meld/Meld.exe"
-git config --global difftool.meld.path 'c/Program Files/Meld/Meld.exe'
+git config --global difftool.meld.path 'c:/Program Files/Meld/Meld.exe'
 
 1. В основной ветке проекта создаем файл ExampleFile01.txt с несколькими строками текста.
 Выводим git status, видим, что файл пока не добавлен
