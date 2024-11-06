@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #задаем функцию
 def function(x):
     return -26 * x ** 2 + 25 * x - 9
@@ -9,10 +10,22 @@ def derivative(x):
 def find_extremes(start, end, step): # это ф-я, которая принимает 3 параметра: start (-5), end (5) и step (0,1)
     min_value = float('inf') # т.о. задается "+ бесконечность", это нужно, чтобы любое значение функции позже стало меньше этого 
     max_value = float('-inf') # т.о. задается "- бесконечность", это нужно, чтобы любое значение функции позже стало больше этого
+=======
+def function(x):
+    return -26 * x ** 2 + 25 * x - 9
+
+def derivative(x):
+    return -52 * x + 25
+
+def find_extremes(start, end, step):
+    min_value = float('inf')
+    max_value = float('-inf')
+>>>>>>> 282f9c2e7ad98124abd2f8e8f617d06ab1caaeef
     min_x = start
     max_x = start
 
     x = start
+<<<<<<< HEAD
     while x <= end: #использует цикл while для перебора значений x от start до end с заданным шагом
         y = function(x) #Вызываем функцию function с текущим значением x и сохраняем результат в переменной y
         
@@ -22,15 +35,34 @@ def find_extremes(start, end, step): # это ф-я, которая приним
             min_x = x # cохраняем текущее значение x в min_x, так как оно соответствует новому наименьшему значению
         
         # проверяем наибольшее значение
+=======
+    while x <= end:
+        y = function(x)
+        
+        # Проверяем наименьшее значение
+        if y < min_value:
+            min_value = y
+            min_x = x
+        
+        # Проверяем наибольшее значение
+>>>>>>> 282f9c2e7ad98124abd2f8e8f617d06ab1caaeef
         if y > max_value:
             max_value = y
             max_x = x
 
+<<<<<<< HEAD
         x += step # увеличиваем значение x на заданный шаг 
 
     return (min_x, min_value), (max_x, max_value)
 
 def main(): # определяем основную функцию main, где будет происходить выполнение программы
+=======
+        x += step
+
+    return (min_x, min_value), (max_x, max_value)
+
+def main():
+>>>>>>> 282f9c2e7ad98124abd2f8e8f617d06ab1caaeef
     start = -5
     end = 5
     step = 0.1
