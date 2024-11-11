@@ -11,8 +11,28 @@ import pandas as pd
 
 file_path = "../data/ratings_small.csv"
 
+
+# 1) Загружаем данные из файла
 df = pd.read_csv(file_path)
-print(df)
+#print(df)
+
+# 2) Общее число оценок в файле
+print(f"Общее число оценок в файле: {len(df['rating'] > 0)}")
+
+# 3) Общее число пользователей, поставивших оценки
+print(f"Общее число пользователей, поставивших оценки: {len(df['userId'].value_counts())}")
+
+# 4) Общее количество оцененных фильмов
+print(f"Общее количество оцененных фильмов: {len(df['movieId'].value_counts())}")
+
+# 5) ID самого активного пользователя:
+print(f"ID самого активного пользователя: {df['userId'].value_counts().idxmax()}")
+
+# 6) Фильм, собравший наибольшее количество оценок:
+print(f"Фильм, собравший наибольшее количество оценок: {df['movieId'].value_counts().idxmax()}")
+
+# df['column'].value_counts(): Подсчёт количества уникальных значений в столбце.
+
 # pd.read_csv(filepath, **kwargs): Читает .csv файл и возвращает объект DataFrame.
 # df.to_csv(filepath, **kwargs): Сохраняет DataFrame в файл .csv
 # df.head(n): Возвращает первые n строк (по умолчанию 5).
