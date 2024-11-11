@@ -1,5 +1,6 @@
 from settings import alphabet, sent_punct
 from string import punctuation
+from stop_words import get_stop_words
 from fuzzywuzzy import fuzz
 import re
 
@@ -12,9 +13,6 @@ import re
     каждого слова в тексте (с критерием схожести, критерий схожести слов выбрать самостоятельно,
     например, spacy (en_core_web_sm) или расстояние Левенштейна).
 5.	Вывести 10 наиболее часто встречаемых слов.
-
-p.s. Рекомендую перед решением задания проанализировать задачу и обосновать алгоритм ее решения в текстовом виде.
-В процессе написания кода использовать комментарии.
 """
 
 
@@ -40,7 +38,7 @@ def remove_punctuation(text: str) -> str:
     # Удаляем знаки препинания (через таблицу замен)
     return text.translate(str.maketrans('', '', punctuation))
 
-def str_2_words(text: str, unique=True, words_only=True) -> set or list:
+def str_2_words(text: str, unique=True, words_only=True, ignore_stopwords=True) -> set or list:
     """
     Функция преобразования текста в список/множество
     :param text: Исходный текст (str)
@@ -48,12 +46,16 @@ def str_2_words(text: str, unique=True, words_only=True) -> set or list:
                         when True - числа не считаются за слова.
     :param unique: Флаг 'уникальности' возвращаемых данных (boolean):
                         when True - функция возвращает данные в виде множества.
+    :param ignore_stopwords: Флаг учета/не учета стоп-слов (boolean):
+                        when True - стоп-слова не учитываются.
     :return: Множество/список слов исходного текста
     """
 
     # Получаем все слова исходного текста
-    words = [word.lower() for word in text.split() if word.isalpha()] if words_only == True \
-            else [word.lower() for word in text.split()]
+    stopwords = get_stop_words("en") if ignore_stopwords else list()
+    #print(stopwords)
+    words = [word.lower() for word in text.split() if (word.isalpha() and word.lower() not in stopwords)] if words_only == True \
+            else [word.lower() for word in text.split() if word.lower() not in stopwords]
 
     return set(words) if unique == True else words
 
@@ -117,23 +119,33 @@ def words_cnt(words: list, crit_lev_val: int) -> dict:
     return d
 
 
+def most_rep_words(words: dict, num=10) -> list[tuple[str, int]]:
+    """
+    Функция сортировки словаря 'words' по значению. Возвращает 'num' сортированных пар 'key: value'
+    :param words: исходный словарь, где key - слово, value - количество его повторений в тексте
+    :param num: число пар key: value словаря, которое необходимо вернуть
+    :return: кортеж из N сортированных (по убыванию) пар key: value исходного словаря
+    """
 
-if __name__ == '__main__':
+    return sorted(words.items(), key=lambda item: item[1], reverse=True)[:num]
 
+
+def main():
     # 1) Считываем данные в файл
-    f = "../data/test_data_02.txt"
+    f = "../data/test_data_01.txt"
     test_data = read_data(f)
-    #print(test_data)
-    print(f"1. Данные файла '{f}' успешно импортированы.")
+    print(f"1. Данные файла '{f}' успешно импортированы. Полученный текст:\n")
+    print(test_data)
 
     # 2) Подготавливаем данные: удаляем знаки препинания из текста
     test_data_1 = remove_punctuation(test_data)
-    #print(test_data_1)
+    print(test_data_1)
 
-    # 3) Преобразуем текст во множество слов и находим его длину (кол-во 'уникальных' слов)
-    uniq_words = str_2_words(test_data_1)
+    # 3) Преобразуем текст во множество слов и находим его длину (кол-во 'уникальных' слов без учета стоп-слов)
+    uniq_words = str_2_words(test_data_1, ignore_stopwords=True)
     # Выводим количество уникальных слов в тексте
     print(f"2. Количество уникальных слов в тексте: {len(uniq_words)}.")
+    print(uniq_words)
 
     # 4) Подсчитываем число гласных и согласных букв
     gl, sogl = get_vow_cons(test_data_1, alph="EN")
@@ -144,14 +156,21 @@ if __name__ == '__main__':
     print(f"4. Общее число предложений в тексте: {len(sentences)}.")
     print(f"\tНиже приводится информация о длине каждого предложения:")
     for ind, sent in enumerate(sentences):
-        print(f"\tSentence #{ind+1}: length: {sentences.get(sent)}; data: {sent}.")
+        print(f"\tSentence #{ind + 1}: length: {sentences.get(sent)}; data: {sent}.")
 
     # 6) Считаем число повторений каждого слова в тексте (с учетом критерием схожести)
-    words_stat = words_cnt(str_2_words(test_data_1, unique=False), crit_lev_val=100)
+    words_stat = words_cnt(str_2_words(test_data_1, unique=False, ignore_stopwords=True), crit_lev_val=100)
     print(f"5. Ниже приводится информация о частоте использования каждого слова в тексте:")
     for word, cnt in words_stat.items():
         print(f"\tWord: '{word}': number of entries: {cnt}.")
 
+    # 7) Выводим N наиболее часто встречаемых слов в тексте
+    N = 10
+    sorted_words = most_rep_words(words_stat, num=N)
+    print(f"6. {N} наиболее часто встречаемых слов в тексте:")
+    for word, cnt in sorted_words:
+        print(f"\tWord: '{word}': number of entries: {cnt}.")
 
 
-
+if __name__ == '__main__':
+    main()
