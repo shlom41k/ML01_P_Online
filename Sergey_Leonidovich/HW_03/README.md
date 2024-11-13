@@ -28,7 +28,7 @@
 + в каталоге **`src`** содержатся файлы **`.py`** с исходным кодом:
     * в файле **`settings.py`** собраны импортируемые константы;
     * в файле **`hw_03.py`** находится основной код программы;
-    * в файле **`hw_03_spacy.ipynd`** находится код программы, который использует готовую библиотеку `spacy` для решения данной задачи;
+    * в файле **`hw_03_spacy.ipynd`** находится код программы, который использует готовую библиотеку `spacy` для решения данной задачи (для сравнения объема и сложности кода);
 + в файле **`requirements.txt`** содержится список подключаемых библиотек.
 <hr>
 
@@ -215,7 +215,7 @@ _В командной строке получим следующее:_
 При этом стоп-слова не учитываются (параметр `ignore_stopwords=True`):
 ```
 # 6) Считаем число повторений каждого слова в тексте (с учетом критерием схожести)
-words_stat = words_cnt(str_2_words(test_data_1, unique=False, ignore_stopwords=True), crit_lev_val=80)
+words_stat = words_cnt(str_2_words(test_data_1, unique=False, ignore_stopwords=True), crit_lev_val=100)
 print(f"5. Ниже приводится информация о частоте использования каждого слова в тексте:")
 for word, cnt in words_stat.items():
     print(f"\tWord: '{word}': number of entries: {cnt}.")
@@ -1166,18 +1166,19 @@ for word, cnt in sorted_words:
 _В командной строке получим следующее:_
 ```
 6. 10 наиболее часто встречаемых слов в тексте:
-	Word: 'belarusian': number of entries: 17.
-	Word: 'belarus': number of entries: 13.
+	Word: 'belarusian': number of entries: 30.
+	Word: 'belarus': number of entries: 30.
+	Word: 'technologies': number of entries: 9.
 	Word: 'can': number of entries: 9.
+	Word: 'game': number of entries: 9.
+	Word: 'games': number of entries: 9.
 	Word: 'scientists': number of entries: 8.
+	Word: 'worlds': number of entries: 8.
+	Word: 'world': number of entries: 8.
 	Word: 'company': number of entries: 8.
-	Word: 'game': number of entries: 8.
-	Word: 'world': number of entries: 7.
-	Word: 'viber': number of entries: 7.
-	Word: 'information': number of entries: 6.
-	Word: 'scientific': number of entries: 6.
 ```
 <hr>
 
 ***В файле **`hw_03_spacy.ipynd`** находится код программы, который использует готовую библиотеку `spacy` для решения данной задачи.
-Готовый мощный функционал библиотеки позволяет значительно сократить и упростить программный код.***
+Готовый мощный функционал библиотеки позволяет значительно сократить и упростить программный код.
+Описание работы см. в том же файле `hw_03_spacy.ipynd`.***
