@@ -1,10 +1,8 @@
 import os
 import re
 
-import nltk
-from nltk.corpus import stopwords
-
 import spacy
+from spacy.lang.ru import stop_words as stop_words
 
 
 def sentence_tokenizer(txt: str) -> list:
@@ -15,7 +13,7 @@ def sentence_tokenizer(txt: str) -> list:
     txt = re.sub(r'\.\.\.', ".", txt)
 
     # split sentence
-    sentence_list = re.split(r'\.', txt)
+    sentence_list = re.split(r'[.!?]', txt)
 
     return sentence_list
 
@@ -54,7 +52,7 @@ def load_fl(path: str) -> str:
 
 def get_type_of_letter(txt: str) -> tuple[int, int]:
     """
-    Функция подсчитывает количество гласных и согласных букв
+    Функция подсчитывает количество гласных и согласных букв, использую встроенную функцию isalpha
     :param txt: текст
     :return: количество гласных и согласных букв
     """
@@ -71,6 +69,22 @@ def get_type_of_letter(txt: str) -> tuple[int, int]:
             consonant_cnt += 1
 
     return vowels_cnt, consonant_cnt
+
+
+def spacy_processing(txt):
+    nlp = spacy.load("ru_core_news_sm")
+
+    # обрабатываем уже почищенный текст от знаков препинания и множественных пробелов, текст в нижнем регистре
+    doc = nlp(txt)
+
+    lemma_uniq = []
+    lemma_uniq_without_sw = []
+    for word in doc:
+        if word.lemma_ not in stop_words.STOP_WORDS:
+            lemma_uniq_without_sw.append(word.lemma_)
+        lemma_uniq.append(word.lemma_)
+
+    return lemma_uniq, lemma_uniq_without_sw
 
 
 if __name__ == "__main__":
@@ -99,14 +113,6 @@ if __name__ == "__main__":
     sentence = sentence_tokenizer(txt_raw)
     print("Количество предложений в тексте " + str(len(sentence)))
 
-    stopwords_ru = stopwords.words("russian")
-    print(len(stopwords_ru))
+    print(spacy_processing(txt_clean))
 
-    nlp = spacy.load("ru_core_news_sm")
-    doc = nlp(txt_clean)
 
-    lemma_uniq = []
-    for word in doc:
-        lemma_uniq.append(word.lemma_)
-
-    print(lemma_uniq)
