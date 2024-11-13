@@ -159,7 +159,7 @@ def main():
         print(f"\tSentence #{ind + 1}: length: {sentences.get(sent)}; data: {sent}.")
 
     # 6) Считаем число повторений каждого слова в тексте (с учетом критерием схожести)
-    words_stat = words_cnt(str_2_words(test_data_1, unique=False, ignore_stopwords=True), crit_lev_val=100)
+    words_stat = words_cnt(str_2_words(test_data_1, unique=False, ignore_stopwords=True), crit_lev_val=80)
     print(f"5. Ниже приводится информация о частоте использования каждого слова в тексте:")
     for word, cnt in words_stat.items():
         print(f"\tWord: '{word}': number of entries: {cnt}.")
