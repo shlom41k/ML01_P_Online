@@ -1,18 +1,41 @@
 import os
 import re
 
+import nltk
+from nltk.corpus import stopwords
 
-def tokenizer(txt: str) -> list:
+import spacy
+
+
+def sentence_tokenizer(txt: str) -> list:
     assert txt != "", "Input text is empty"
 
-    # cleaning txt
-    txt = re.sub(r'[^а-яА-ЯёЁ]', " ", txt.lower())
+    txt = re.sub(r'[^а-яё.!?]', " ", txt.lower())
+    txt = re.sub(r'\s+', " ", txt)
+    txt = re.sub(r'\.\.\.', ".", txt)
+
+    # split sentence
+    sentence_list = re.split(r'\.', txt)
+
+    return sentence_list
+
+
+def tokenizer(txt: str) -> tuple[str, list]:
+    """
+    Наивный токенизатор русскоязычного текста. Функция убирает из текста все небуквенные символы,
+    меняет регистр на нижний, разделяет на слова
+    :param txt: сырой русский текст
+    :return: список токенов
+    """
+    assert txt != "", "Input text is empty"
+
+    txt = re.sub(r'[^а-яё]', " ", txt.lower())
     txt = re.sub(r'\s+', " ", txt)
 
     # split words
     words_list = re.split(" ", txt)
 
-    return words_list
+    return txt, words_list
 
 
 def load_fl(path: str) -> str:
@@ -29,16 +52,61 @@ def load_fl(path: str) -> str:
     return txt
 
 
+def get_type_of_letter(txt: str) -> tuple[int, int]:
+    """
+    Функция подсчитывает количество гласных и согласных букв
+    :param txt: текст
+    :return: количество гласных и согласных букв
+    """
+    vowels = set("аеёиоуыэюя")
+    # consonant = set("бвгджзйклмнпрстфхцчшщ")
+
+    vowels_cnt = 0
+    consonant_cnt = 0
+
+    for lt in txt:
+        if lt in vowels:
+            vowels_cnt += 1
+        elif lt.isalpha():
+            consonant_cnt += 1
+
+    return vowels_cnt, consonant_cnt
+
+
 if __name__ == "__main__":
     txt_raw = load_fl("book.txt")
-    print(txt_raw)
+    print("Загрузка книги. Количество символов: " + str(len(txt_raw)))
 
-    txt_tk = tokenizer(txt_raw)
-    print(txt_tk)
+    txt_clean, txt_tk = tokenizer(txt_raw)
+    print("Количество токенов: " + str(len(txt_tk)))
+    # print(txt_tk)
 
-"""
- планы
-  - реализовать два режима токенизатора: разбиение по предложениям и по словам (последний есть)
-  - реализовать функцию подсчета гласных и согластных букв (буду считать в отдельных словах)
-"""
+    txt_tk_set = set(txt_tk)
+    print("Количество уникальных токенов (слов): " + str(len(txt_tk_set)))
 
+    word = txt_tk[20]
+    v_cnt, c_cnt = get_type_of_letter(word)
+    print("Количество гластных букв в слове \"" + word + "\" " + str(v_cnt) + ", а согласных - " + str(c_cnt))
+
+    general_v_cnt = 0
+    general_c_cnt = 0
+    for w in txt_tk:
+        v_cnt, c_cnt = get_type_of_letter(w)
+        general_v_cnt += v_cnt
+        general_c_cnt += c_cnt
+    print("Количество гластных букв всех токенов " + str(general_v_cnt) + ", а согласных - " + str(general_c_cnt))
+
+    sentence = sentence_tokenizer(txt_raw)
+    print("Количество предложений в тексте " + str(len(sentence)))
+
+    stopwords_ru = stopwords.words("russian")
+    print(len(stopwords_ru))
+
+    nlp = spacy.load("ru_core_news_sm")
+    doc = nlp(txt_clean)
+
+    lemma_uniq = []
+    for word in doc:
+        lemma_uniq.append(word.lemma_)
+
+    print(lemma_uniq)
