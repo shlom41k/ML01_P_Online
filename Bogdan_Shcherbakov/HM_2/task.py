@@ -20,7 +20,7 @@ def num_of_vowels():
     return num_of_vowel
 
 def num_of_consonants():
-    consonants = "bcdfghjklmnpqrstvwxz"
+    consonants = "bcdfghjklmnpqrstvwxyz"
     num_of_consonants = sum(txt_reader().lower().count(consonant) for consonant in consonants)
     return num_of_consonants
 
@@ -73,9 +73,6 @@ print(f"Колличество гласных: {num_of_vowels()}")
 print(f"Колличество согласных: {num_of_consonants()}")
 print(f"Колличество уникальных слов: {num_of_unic_worlds()}")
 print(f"Колличество предложений : {num_of_sentences()}")
-
 print(f"Колличество предложений от spacy : {num_of_sentences_spacy()}")
-
 print(f"Средняя длинна предложения {medium_len_of_sents()}")
-
 print(f"Топ 10 часто используемых слов: {list(top_wolds())}")
