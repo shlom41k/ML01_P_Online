@@ -50,6 +50,7 @@
 Структура проекта `HW_05` имеет следующий вид:
 + в каталоге **`src`** содержатся файлы **`.py`** с исходным кодом:
     * в файле **`hw_05.py`** находится код основной программы;
+    * в файле **`hw_05.ipynb`** находится код основной программы для `Jupyter Notebook`.
 
 
 ## Выполнение программы
@@ -61,14 +62,15 @@ python.exe .\hw_05.py
 
 ## Описание работы программы
 Ниже приведен листинг скрипта **`hw_05.py`**:
+
 ```
 import string
 
 
 class Alphabet:
 
-    # Total objects in class
-    __alphabets = []
+    # All objects in class
+    __alphabets = list()
 
     def __init__(self, language: str, letters: list):
         """
@@ -81,12 +83,12 @@ class Alphabet:
         self.__letters = letters
 
         # Add item to list of all class objects
-        self.__class__.__alphabets.append(self)
+        self.__class__.__alphabets.append(self.__language)
 
     def __del__(self):
         """ Destructor """
         # Remove item from list of all class objects
-        self.__class__.__alphabets.remove(self)
+        self.__class__.__alphabets.remove(self.__language)
 
     def __str__(self) -> str:
         """ View for object, when use str() method """
@@ -110,7 +112,7 @@ class Alphabet:
 
     def print_letters(self) -> None:
         """ Display all letters in alphabet """
-        print(f"Буквы: {''.join(self.__letters)}.")
+        print(f"Буквы '{self.__language}' алфавита: {''.join(self.__letters)}.")
 
     def letters_num(self) -> int:
         """ Get number of letters in alphabet """
@@ -118,6 +120,7 @@ class Alphabet:
 
 
 class EngAlphabet(Alphabet):
+
     def __init__(self, language: str, letters: str):
         """
         Constructor: create object of class EngAlphabet.
@@ -132,6 +135,7 @@ class EngAlphabet(Alphabet):
     def __del__(self):
         """ Destructor """
         super().__del__()
+        ...
 
     def is_en_letter(self, letter: str) -> bool:
         """
@@ -149,7 +153,7 @@ class EngAlphabet(Alphabet):
     @staticmethod
     def example() -> str:
         """ Return text example """
-        return "Example of simple english language tex"
+        return "Example of simple english language text"
 
 
 if __name__ == "__main__":
@@ -162,7 +166,7 @@ if __name__ == "__main__":
     en.print_letters()
 
     # 3) Выведем количество букв в алфавите
-    print(f"Чисто букв в алфавите: {en.letters_num()}.")
+    print(f"Число букв в '{en.language}' алфавите: {en.letters_num()}.")
 
     # 4) Проверим, относится ли символ 'F' к английскому алфавиту
     test_letter = "F"
@@ -182,9 +186,9 @@ if __name__ == "__main__":
 _В результате выполнения данного кода в командной строке получим следующее:_
 ```
 Алфавит: 'EN'.
-Буквы: abcdefghijklmnopqrstuvwxyz.
-Чисто букв в алфавите: 26.
+Буквы 'EN' алфавита: abcdefghijklmnopqrstuvwxyz.
+Число букв в 'EN' алфавите: 26.
 Буква 'F' относится к английскому алфавиту.
 Буква 'Щ' не относится к английскому алфавиту.
-Пример текста: 'Example of simple english language tex'.
+Пример текста: 'Example of simple english language text'.
 ```
