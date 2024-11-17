@@ -38,7 +38,7 @@ class EngAlphabet(Alphabet):
     def __init__(self):
         # инициализируем родительский класс
         super().__init__("en", list(string.ascii_lowercase))
-        # можно и так
+        # а можно и так
         # Alphabet.__init__(self, "en", list(string.ascii_lowercase))
 
         print("Объект класса EngAlphabet создан!")
@@ -84,9 +84,11 @@ if __name__ == "__main__":
     print_sep_section("тест 6")
     print(alph_en.example())
 
+    # делали такое на уроке
     print_sep_section("тест *")
-    print("Пример доступа к статическому свойсту. Должно вывести количество букв в алфавите (26): ", end="")
+    print("Пример доступа к статическому свойству. Должно вывести количество букв в алфавите (26): ", end="")
     print(alph_en._EngAlphabet__letters_num)
+
 
 """
 Out:
