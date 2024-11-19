@@ -24,7 +24,51 @@
 
 + Рассмотрим простой пример, который циклически (10 циклов) осуществляет скачивание _200_ изображений по заданному `URL`
 с последующим их сохранением. Для отправки запросов и загрузки данных будем использовать библиотеку `requests`.
-Листинг программы приведен в файле `HW_06_requests.py`. В результате выполнения получим:
+Листинг программы приведен в файле `HW_06_requests.py`:
+```
+import os
+import requests
+from time import time
+from settings import DIRS_PATH, SRC_URL, DOWNLOAD_NUM, IMG_NUM
+
+
+def get_img(file_index, dir_path: str):
+    """Download image & save to file"""
+    filename = f"{dir_path}/image_{file_index}.jpg"
+    try:
+        response = requests.get(SRC_URL, stream=True)
+        if response.status_code == 200:
+            with open(filename, "wb") as f:
+                f.write(response.content)
+            # print(f'Image {filename} downloaded')
+        else:
+            print(f"Failed to download image {filename}")
+    except Exception as e:
+        print(f"Error downloading image {filename}: {e}")
+
+
+def main():
+    for step in range(DOWNLOAD_NUM):
+
+        # Path for images
+        dirs_path = DIRS_PATH.format(step)
+        os.makedirs(dirs_path, exist_ok=True)
+
+        # Begin time
+        t1 = time()
+
+        # Download images
+        for img in range(IMG_NUM):
+            get_img(img, dirs_path)
+
+        # End time
+        print(f"Step {step + 1}. Working time: {time() - t1}")
+
+
+if __name__ == "__main__":
+    main()
+```
+В результате выполнения получим:
 ```
     Step 1. Working time: 27.404662132263184
     Step 2. Working time: 25.7896728515625
@@ -44,7 +88,56 @@
 В Python для работы с потоками используется стандартный модуль `threading`, 
 который предоставляет _API_ для создания и управления потоками.
 Многопоточность позволяет программе выполнять несколько операций одновременно.
-Листинг программы приведен в файле `HW_06_thread.py`. 
+Листинг программы приведен в файле `HW_06_thread.py`:
+```
+import os
+import requests
+from time import time
+from concurrent.futures import ThreadPoolExecutor
+from settings import DIRS_PATH, SRC_URL, DOWNLOAD_NUM, IMG_NUM
+from HW_06_requests import get_img
+
+
+def get_img(file_index, dir_path: str):
+    """Download image & save to file"""
+    filename = f"{dir_path}/image_{file_index}.jpg"
+    try:
+        response = requests.get(SRC_URL, stream=True)
+        if response.status_code == 200:
+            with open(filename, "wb") as f:
+                f.write(response.content)
+            # print(f'Image {filename} downloaded')
+        else:
+            print(f"Failed to download image {filename}")
+    except Exception as e:
+        print(f"Error downloading image {filename}: {e}")
+
+
+def main():
+
+    for step in range(DOWNLOAD_NUM):
+
+        # Path for images
+        dirs_path = DIRS_PATH.format(step)
+        os.makedirs(dirs_path, exist_ok=True)
+
+        # Number of MAX threads
+        max_threads = 5
+
+        # Begin time
+        t1 = time()
+
+        # Use ThreadPoolExecutor for threads control
+        with ThreadPoolExecutor(max_threads) as executor:
+            executor.map(get_img, range(IMG_NUM), [dirs_path] * IMG_NUM)
+
+        # End time
+        print(f"Step {step + 1}. Working time: {time() - t1}")
+
+
+if __name__ == "__main__":
+    main()
+```
 Ниже приведен результат выполнения программного кода для разного числа одновременно работающих потоков (переменная `max_threads`):
 ```
     # 5 threads
@@ -130,7 +223,80 @@
 Асинхронность позволяет выполнять операции, не блокируя выполнение программы. 
 _Miltiprocessing_ предоставляет возможность параллельного выполнения кода с использованием нескольких процессов.
 Для асинхронных HTTP-запросов используется библиотека `aiohttp`, а для параллельного выполнения - `multiprocessing`.
-Листинг программы приведен в файле `HW_06_multiproc.py`. 
+Листинг программы приведен в файле `HW_06_multiproc.py`:
+```
+import os
+import aiohttp
+import asyncio
+from multiprocessing import Process, Queue
+from time import time
+from settings import DIRS_PATH, SRC_URL, IMG_NUM, DOWNLOAD_NUM
+
+
+async def get_img(session: aiohttp.ClientSession, url: str, filename: str):
+    """Download image & save to file"""
+    try:
+        async with session.get(url) as response:
+            if response.status == 200:
+                with open(filename, "wb") as f:
+                    f.write(await response.read())
+                # print(f'Image {filename} downloaded')
+            else:
+                print(f"Failed to download image {filename}")
+    except Exception as e:
+        print(f"Error downloading image {filename}: {e}")
+
+
+async def download_files(task_queue):
+    """Create tasks to download images"""
+    async with aiohttp.ClientSession() as session:
+        while not task_queue.empty():
+            try:
+                filename = task_queue.get_nowait()
+                await get_img(session, SRC_URL, filename)
+            except asyncio.QueueEmpty:
+                break
+
+
+def main():
+
+    for step in range(DOWNLOAD_NUM):
+
+        # Number of process
+        num_processes = 50
+
+        # Path for images
+        dir_path = DIRS_PATH.format(step)
+        os.makedirs(dir_path, exist_ok=True)
+
+        # Create task queue
+        task_queue = Queue()
+        for i in range(IMG_NUM):
+            filename = os.path.join(dir_path, f"image_{i}.jpg")
+            task_queue.put(filename)
+
+        # Begin time
+        t1 = time()
+
+        # Start downloads (run processes)
+        processes = []
+        for _ in range(num_processes):
+            # Asynchronous download
+            p = Process(target=asyncio.run(download_files(task_queue)), args=(task_queue, ))
+            processes.append(p)
+            p.start()
+
+        # Wait until all process stopped
+        for p in processes:
+            p.join()
+
+        # End time
+        print(f"Step {step + 1}. Working time: {time() - t1}")
+
+
+if __name__ == "__main__":
+    main()
+```
 Ниже приведен результат выполнения программного кода для разного числа работающих процессов (переменная `num_processes`):
 ```
     # 2 process
@@ -188,7 +354,54 @@ _Miltiprocessing_ предоставляет возможность паралл
 
 + Теперь рассмотрим вариант реализации, где будем использовать асинхронный подход для параллельного выполнения процессов. 
 Для асинхронных HTTP-запросов используется библиотека `aiohttp`. Для работы с параллельными задачами будем использовать модуль `asyncio`. 
-Листинг программы приведен в файле `HW_06_aiohttp.py`. 
+Листинг программы приведен в файле `HW_06_aiohttp.py`:
+```
+import asyncio
+import aiohttp
+import os
+from time import time
+from settings import SRC_URL, IMG_NUM, DOWNLOAD_NUM, DIRS_PATH
+
+
+async def get_img(session: aiohttp.ClientSession, url: str, cur_num: int, dir_path: str):
+    """Download image & save to file"""
+    try:
+        async with session.get(url) as response:
+            if response.status == 200:
+                file_path = f"{dir_path}/image_{cur_num}.jpg"
+                with open(file_path, "wb") as f:
+                    f.write(await response.read())
+                #print(f'Image {num} downloaded')
+            else:
+                print(f"Failed to download image {cur_num}")
+    except Exception as e:
+        print(f"Error downloading image {cur_num}: {e}")
+
+
+async def download_images(dir_path: str):
+    """Create tasks to download images"""
+    async with aiohttp.ClientSession() as session:
+        tasks = [get_img(session, SRC_URL, img_num, dir_path) for img_num in range(IMG_NUM)]
+        await asyncio.gather(*tasks)
+
+
+if __name__ == '__main__':
+
+    for step in range(DOWNLOAD_NUM):
+
+        # Path for images
+        dirs_path = DIRS_PATH.format(step)
+        os.makedirs(dirs_path, exist_ok=True)
+
+        # Begin time
+        t1 = time()
+
+        # Start downloads
+        asyncio.run(download_images(dirs_path))
+
+        # End time
+        print(f"Step {step + 1}. Working time: {time() - t1}")
+```
 Ниже приведен результат выполнения программного кода:
 ```
     Step 1. Working time: 1.208517074584961
@@ -206,7 +419,7 @@ _Miltiprocessing_ предоставляет возможность паралл
 <hr>
 
 
-### 2. Работа с потоками и процессами.
+### 2. Работа с декораторами.
 - Декораторы в Python — это функции, которые изменяют или расширяют поведение других функций или методов без изменения их исходного кода. 
 - Напишем собственный декоратор, который будет сохранять результат работы функции на ближайшие три запуска и вместо выполнения функции возвращать сохранённый результат. 
 После трёх запусков функция будет вызываться вновь, а результат работы функции — вновь кешироваться.
@@ -311,14 +524,15 @@ Result: 5
 
 ## Структура репозитория
 Структура проекта `HW_06` имеет следующий вид:
++ в каталоге **`pics`** (будет создан в результате выполнения программы) содержатся скачанные изображения;
 + в каталоге **`src`** содержатся файлы **`.py`** с исходным кодом:
-    * в файле **`hw_06_requests.py`** находится код программы для работы с синхронными запросами (`requests`);
-    * в файле **`hw_06_threads.py`** находится код программы для работы с поточными запросами (`threads`);
-    * в файле **`hw_06_multiproc.py`** находится код программы для работы с процессами (`multiprocessing`);
-    * в файле **`hw_06_aiohttp.py`** находится код программы для работы с асинхронными процессами и запросами (`asyncio`, `aiohttp`);
+    * в файле **`HW_06_requests.py`** находится код программы для работы с синхронными запросами (`requests`);
+    * в файле **`HW_06_threads.py`** находится код программы для работы с поточными запросами (`threads`);
+    * в файле **`HW_06_multiproc.py`** находится код программы для работы с процессами (`multiprocessing`);
+    * в файле **`HW_06_aiohttp.py`** находится код программы для работы с асинхронными процессами и запросами (`asyncio`, `aiohttp`);
     * в файле **`sittings.py`** находятся константы и параметры настройки для остальных программных файлов.
+    * в файле **`HW_06_cache_01.py`** находится программный код, реализующий заданный в задании декоратор.
 + в файле **`requirements.txt`** содержится список необходимых для установки библиотек.
-+ в каталоге **`pics`** (будет создан в результате выполнения программы) содержатся скачанные изображения.
 
 
 ## Выполнение программ
