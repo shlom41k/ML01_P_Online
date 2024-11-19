@@ -1,23 +1,23 @@
 import random
 
-GLOBAL_CACHE = dict()
-
 
 def cache_wrapper(func):
     def wrapped(*args, **kwargs):
-        context = GLOBAL_CACHE.get(id(func))
+        try:
+            _ = func.__cache__
+            _ = func.__cache_itt__
+        except AttributeError:
+            func.__cache__ = None
+            func.__cache_itt__ = 0
 
-        if context is not None and context[0] < 3:
-            value = context[1]
-            itt = context[0]
-
-            GLOBAL_CACHE.update({id(func): [itt + 1, value]})
+        if func.__cache__ is not None and func.__cache_itt__ < 3:
+            func.__cache_itt__ += 1
         else:
             print("Update context for " + func.__name__ + " (" + str(id(func)) + ")")
-            GLOBAL_CACHE.update({id(func): [0, func(*args, **kwargs)]})
+            func.__cache_itt__ = 0
+            func.__cache__ = func(*args, **kwargs)
 
-        return GLOBAL_CACHE.get(id(func))[1]
-
+        return func.__cache__
     return wrapped
 
 
@@ -37,16 +37,12 @@ def func_for_test_2(a: int):
 
 
 if __name__ == "__main__":
-    print("GLOBAL_CACHE: ", GLOBAL_CACHE)
     print("-" * 120)
 
     for i in range(10):
         r_0 = func_for_test_0(random.randint(0, 10))
         r_1 = func_for_test_1(random.randint(0, 10))
         r_2 = func_for_test_2(random.randint(0, 10))
-
-        print()
-        print("GLOBAL_CACHE: ", GLOBAL_CACHE)
 
         print()
         print("Results of functions: func_0 = " + str(r_0) + " func_1 = " + str(r_1) + " func_2 = " + str(r_2))
